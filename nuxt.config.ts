@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
   runtimeConfig: {
     public: {
-      SERVER_IP: process.env.NITRO_SERVER_IP || '0.0.0.0',
+      SERVER_IP: '0.0.0.0',
     }
   }
 })
