@@ -22,8 +22,7 @@
                 </div>
                 <div>
                     <button class="py-1.5 px-4 rounded-md bg-[#333539] cursor-no-drop w-56"
-                        :class="{ 'bg-success cursor-pointer': canUpload }"
-                        @click="canUpload && send()">Завантажити</button>
+                        :class="{ 'bg-success cursor-pointer': canUpload }" @click="canUpload && send()">Upload</button>
                 </div>
             </div>
         </div>
