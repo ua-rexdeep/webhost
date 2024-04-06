@@ -1,4 +1,35 @@
 {
-  // https://nuxt.com/docs/guide/concepts/typescript
-  "extends": "./.nuxt/tsconfig.json"
+    "compilerOptions": {
+        "module": "ESNext",
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "esnext",
+        "sourceMap": false,
+        "outDir": "./dist",
+        "baseUrl": "src",
+        "incremental": true,
+        "skipLibCheck": true,
+        "strictNullChecks": true,
+        "strict": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "allowJs": true,
+        "alwaysStrict": true,
+        "types": [
+            "node"
+        ],
+        "paths": {
+            "@/*": [
+                "./"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules",
+        "dist",
+        "test",
+        "**/*spec.ts"
+    ]
 }
