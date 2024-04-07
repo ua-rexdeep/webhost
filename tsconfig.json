@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "ESNext",
+        "module": "NodeNext",
         "removeComments": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
@@ -17,6 +17,7 @@
         "noImplicitThis": true,
         "allowJs": true,
         "alwaysStrict": true,
+        "moduleResolution": "NodeNext",
         "types": [
             "node"
         ],
@@ -30,6 +31,7 @@
         "node_modules",
         "dist",
         "test",
+        "src/frontend",
         "**/*spec.ts"
     ]
 }

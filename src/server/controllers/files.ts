@@ -1,0 +1,91 @@
+import { Application, Request, Response } from 'express';
+import { FileArray, UploadedFile } from 'express-fileupload';
+import { MySQL } from '../mysqlService';
+import fs from 'fs';
+
+export function getAllFilesHandler(req: Request, res: Response) {
+    
+    if(req.ip != '::1') {
+        res.statusCode = 403;
+        res.json({ error: 'help me' })
+    }
+
+    MySQL.GetAllFiles().then((files) => res.json(files));
+}
+
+export function getAllCategories(req: Request, res: Response) {
+    if(req.ip != '::1') {
+        res.statusCode = 403;
+        res.json({ error: 'help me' })
+    }
+
+    MySQL.GetAllCategories().then((response) => res.json(response));
+}
+
+export function getFilesByCategory(req: Request<{ category: string }>, res: Response) {
+    
+    if(req.ip != '::1') {
+        res.statusCode = 403;
+        res.json({ error: 'help me' })
+    }
+
+    MySQL.GetFilesByCategory(req.params.category).then((response) => res.json(response));
+}
+
+export async function createFile(req: Request, res: Response) {
+    
+    if(req.ip != '::1') {
+        res.statusCode = 403;
+        res.json({ error: 'help me' })
+    }
+
+    const id = req.body['file-id'];
+    const category = req.body['file-category'];
+    if(req.files) {
+        const file = req.files![0] as UploadedFile;
+        const type = file.mimetype.split('/')[1];
+
+        const fileData = await MySQL.GetFileById(id);
+        if(fileData) {
+            res.statusCode = 400;
+            return void res.json({ error: 'File with id already exists' });
+        }
+        
+        file.mv(`storage/${id}.${type}`, (err) => {
+            if(err) console.error(err);
+            else MySQL.CreateFile(id, category, type, file.size);
+        });
+
+        const newFile = await MySQL.GetFileById(id);
+        res.json(newFile);
+    }
+}
+
+export async function getFileById(req: Request<{ id: string }>, res: Response) {
+    const id = req.params.id.split('.')[0];
+    const fileData = await MySQL.GetFileById(id);
+    if(fileData) {
+
+        fs.readFile(`storage/${id}.${fileData.type}`, (err, fileBuffer) => {
+            if(err) {
+                res.statusCode = 404;
+                return void res.json({ error: err.code });
+            }
+
+            if(req.ip != '::1') MySQL.UpdateFileLastUsed(id);
+            res.end(fileBuffer);
+        })
+
+    } else {
+        res.statusCode = 404;
+        return void res.json({ error: 'No file in database' });
+    }
+}
+
+export function deleteFileById(req: Request<{ id: string }>, res: Response) {
+    if(req.ip != '::1') {
+        res.statusCode = 403;
+        res.json({ error: 'help me' })
+    }
+    MySQL.DeleteFileById(req.params.id);
+}
