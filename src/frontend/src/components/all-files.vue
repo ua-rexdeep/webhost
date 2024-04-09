@@ -66,7 +66,6 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useFileStore } from '../stores/files';
-import { APIProvider } from '../api/api';
 import { useCategories } from '../stores/categories';
 import { useToast } from 'vue-toast-notification';
 
@@ -77,6 +76,8 @@ const sortBy = ref(0);
 const lastCopied = ref(null);
 const filterByID = ref('');
 const changeCategory = ref({ show: false, x: 0, y: 0 });
+
+const env = import.meta.env;
 
 const computedFiles = computed(() => {
     let sorted = [...fileStore.files];
@@ -91,7 +92,7 @@ const computedFiles = computed(() => {
 })
 
 function CopyIDToClipboard(id, text) {
-    navigator.clipboard.writeText(`${APIProvider.defaults.baseURL}/file/${text}`);
+    navigator.clipboard.writeText(`${env.VITE_IP}/file/${text}`);
     lastCopied.value = id;
     setTimeout(() => {
         if(lastCopied.value == id) lastCopied.value = null;
