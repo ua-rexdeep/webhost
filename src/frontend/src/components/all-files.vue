@@ -41,9 +41,9 @@
                     :class="{ 'text-[#F05D5D]': Date.now() - file?.lastUsed > 2629800000 }">
                     LastUsed: {{ new Date(file.lastUsed).toLocaleDateString() }}
                 </div>
-                <div class="flex pr-2 gap-2">
-                    <i class="fa-solid fa-layer-group cursor-pointer" @click.stop="onChangeCategoryClick"></i>
-                    <i class="fa-solid fa-trash text-[#F05D5D] cursor-pointer"
+                <div class="flex pr-2 gap-2 items-center">
+                    <i class="fa-solid fa-layer-group cursor-pointer p-1 hover:bg-[#111] rounded" @click.stop="e => onChangeCategoryClick(e, file.id)"></i>
+                    <i class="fa-solid fa-trash text-[#F05D5D] cursor-pointer p-1 hover:bg-[#111] rounded"
                         @click.stop="fileStore.DeleteFile(file.id)"></i>
                 </div>
             </div>
@@ -54,7 +54,7 @@
                 :class="[ changeCategory.show ? 'opacity-100 z-10' : 'opacity-0 -z-10' ]">
                 <div class="w-44 min-h-12 bg-[#333] rounded-md flex flex-col gap-1 py-1 relative"
                     :style="{ 'left': changeCategory.x+'px', 'top': changeCategory.y+'px' }">
-                    <div class="text-white text-sm p-1 px-3 hover:bg-[#222] cursor-pointer" @click.stop="onChangeCategoryOption(cat.name)"
+                    <div class="text-white text-base p-2 px-3 hover:bg-[#222] cursor-pointer" @click.stop="onChangeCategoryOption(cat.name)"
                         v-for="cat in categoryStore.categories" :key="cat.id">{{ cat.name }}</div>
                 </div>
             </div>
@@ -75,7 +75,7 @@ const categoryStore = useCategories();
 const sortBy = ref(0);
 const lastCopied = ref(null);
 const filterByID = ref('');
-const changeCategory = ref({ show: false, x: 0, y: 0 });
+const changeCategory = ref({ show: false, x: 0, y: 0, fileId: null });
 
 const env = import.meta.env;
 
@@ -99,14 +99,15 @@ function CopyIDToClipboard(id, text) {
     }, 1500);
 }
 
-function onChangeCategoryClick({ target }) {
+function onChangeCategoryClick({ target }, fileID) {
     const rect = target.getBoundingClientRect();
     changeCategory.value.show = true;
     changeCategory.value.x = rect.x + rect.width;
     changeCategory.value.y = rect.y + rect.height;
+    changeCategory.value.fileId = fileID;
 }
 
-function onChangeCategoryOption(categoryName) {
+async function onChangeCategoryOption(categoryName) {
     changeCategory.value.show = false;
 
     $toast.success(`Category for file changed to ${categoryName}`, {
@@ -123,6 +124,9 @@ function onChangeCategoryOption(categoryName) {
         icon: "fas fa-rocket",
         rtl: false
     });
+
+    await categoryStore.changeFileCategory(changeCategory.value.fileId, categoryName);
+    categoryStore.getAllCategories();
 }
 </script>
 

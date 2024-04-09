@@ -95,3 +95,10 @@ export function createCategory(req: Request, res: Response) {
 
     res.end();
 }
+
+export function changeFileCategory(req: Request<{ id: string }, null, { categoryName: string }>, res: Response) {
+    
+    MySQL.ChangeFileCategory(req.params.id, req.body.categoryName);
+
+    res.end();
+}

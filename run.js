@@ -15,8 +15,7 @@ const run = (cmd) => new Promise((done, reject) => {
 
 (async () => {
     await run('npm i');
-    await run('cd src/frontend && npm i');
-    await run('cd ../..');
+    await run('cd src/frontend && npm i && cd ../..');
     exec('npm run build:web', (err) => {
         if (err) {
             console.error("Error during build web:", err);

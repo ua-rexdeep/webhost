@@ -9,7 +9,14 @@ type TFile = { id: string, type: string, addedAt: number, lastUsed: number }
 export const useFileStore = defineStore('FileStore', () => {
 
     const allFilesCount = ref(0);
-    const files = ref<TFile[]>([]);
+    const files = ref<TFile[]>([
+        {
+            addedAt: Date.now(),
+            id: '123',
+            lastUsed: Date.now(),
+            type: 'jpg',
+        }
+    ]);
 
     async function GetAllFilesData() {
         const data = await api.getAllFiles();

@@ -6,5 +6,9 @@ export function getAllCategories() {
 }
 
 export function createCategory(name: string) {
-    APIProvider.post('/categories/create', { name });
+    return APIProvider.post('/categories/create', { name });
+}
+
+export function changeFileCategory(id: string, name: string) {
+    return APIProvider.patch(`/file/${id}/category`, { categoryName: name });
 }

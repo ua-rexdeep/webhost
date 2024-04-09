@@ -5,7 +5,12 @@ import { useFileStore } from "./files";
 
 export const useCategories = defineStore('categoriesStore', () => {
 
-    const categories = ref<{ name: string, num_files: number }[]>([]);
+    const categories = ref<{ name: string, num_files: number }[]>([
+        {
+            name: '1231',
+            num_files: 0,
+        }
+    ]);
     const currentCategory = ref<string | null>(null);
 
     async function getAllCategories() {
@@ -25,6 +30,10 @@ export const useCategories = defineStore('categoriesStore', () => {
         categories.value.push({ name, num_files: 0 });
     }
 
+    function changeFileCategory(id: string, category: string) {
+        return api.changeFileCategory(id, category);
+    }
+
     return {
         currentCategory,
         categories,
@@ -32,5 +41,6 @@ export const useCategories = defineStore('categoriesStore', () => {
         selectCategory,
         getAllCategories,
         createCategory,
+        changeFileCategory,
     }
 });

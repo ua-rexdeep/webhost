@@ -66,6 +66,12 @@ class MySQLExecutor {
         if(!this.connection) throw new Error("DB not connected");
         this.connection.query(`insert into web_categories (name) values (?);`, [name]);
     }
+
+    ChangeFileCategory(fileID: string, categoryName: string) {
+        if(!this.connection) throw new Error("DB not connected");
+        console.log('update web_files set category = ? where id = ?;', categoryName, fileID)
+        this.connection.query('update web_files set category = ? where id = ?;', [categoryName, fileID]);
+    }
 }
 
 export const MySQL = new MySQLExecutor();

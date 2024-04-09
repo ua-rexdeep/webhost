@@ -1,5 +1,5 @@
 import express, { Application, Request, Response } from 'express';
-import { createCategory, createFile, deleteFileById, getAllCategories, getAllFilesHandler, getFileById, getFileDataById, getFilesByCategory } from './controllers/files';
+import { changeFileCategory, createCategory, createFile, deleteFileById, getAllCategories, getAllFilesHandler, getFileById, getFileDataById, getFilesByCategory } from './controllers/files';
 import { assets, dashboard, index } from './controllers/dashboard';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -33,6 +33,7 @@ async function SetupControllers(app: Application) {
     router_api.get('/file/:id', getFileById);
     router_api.get('/file/:id/meta', IPMiddleware, getFileDataById);
     router_api.delete('/file/:id', IPMiddleware, deleteFileById);
+    router_api.patch('/file/:id/category', IPMiddleware, changeFileCategory);
 
     router_api.get('/categories', IPMiddleware, getAllCategories);
     router_api.get('/category/:category', IPMiddleware, getFilesByCategory);
