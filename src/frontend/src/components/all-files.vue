@@ -64,7 +64,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useFileStore } from '../stores/files';
 import { useCategories } from '../stores/categories';
 import { useToast } from 'vue-toast-notification';
@@ -92,7 +92,7 @@ const computedFiles = computed(() => {
 })
 
 function CopyIDToClipboard(id, text) {
-    navigator.clipboard.writeText(`${env.VITE_IP}/file/${text}`);
+    navigator.clipboard.writeText(`http://${env.VITE_IP}/api/file/${text}`);
     lastCopied.value = id;
     setTimeout(() => {
         if(lastCopied.value == id) lastCopied.value = null;

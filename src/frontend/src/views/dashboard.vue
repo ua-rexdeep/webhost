@@ -1,6 +1,6 @@
 <template>
     <title>WebHost - Dashboard</title>
-    <div class="w-full h-full flex gap-3">
+    <div class="w-full h-full flex gap-3" id="droparea">
         <div class="flex flex-col overflow-hidden m-4 mr-2 rounded-xl flex-1 gap-2 bg-[#222326] p-2.5 border border-[#333539]">
             <AllFiles />
         </div>
@@ -143,5 +143,21 @@ function uploadFileNameInput({ target }) {
 onMounted(() => {
     categoryStore.getAllCategories();
     fileStore.GetAllFilesData();
+
+    document.addEventListener('dragover', (e) => {
+        e.preventDefault()
+    });
+    document.addEventListener("drop", function(e) {
+        e.preventDefault()
+        e.stopPropagation()
+        const files = Array.from(e.dataTransfer.files);
+        
+        uploadFile.value = files[0]
+        
+        const [, match] = files[0].name.match(/^([\w\s\d_-]+)/);
+        uploadFileName.value = match;
+
+        uploadFileNameInput({ target: { value: match } })
+    }, false);
 })
 </script>
