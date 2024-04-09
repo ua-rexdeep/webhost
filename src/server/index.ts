@@ -1,10 +1,11 @@
 import express, { Application, Request, Response } from 'express';
-import { createFile, deleteFileById, getAllCategories, getAllFilesHandler, getFileById, getFilesByCategory } from './controllers/files';
+import { createCategory, createFile, deleteFileById, getAllCategories, getAllFilesHandler, getFileById, getFileDataById, getFilesByCategory } from './controllers/files';
 import { assets, dashboard, index } from './controllers/dashboard';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';
 import { MySQL } from './mysqlService';
+import { IPMiddleware } from './middleware/ipmiddleware';
 
 const app = express();
 const port = process.env.PORT || 3092;
@@ -23,17 +24,19 @@ async function SetupControllers(app: Application) {
     app.use('/', router_front);
     app.use('/api', router_api);
 
-    router_front.get('/', index);
-    router_front.get('/assets/:file', assets);
-    router_front.get('/dashboard', dashboard);
+    router_front.get('/', IPMiddleware, index);
+    router_front.get('/assets/:file', IPMiddleware, assets);
+    router_front.get('/dashboard', IPMiddleware, dashboard);
 
-    router_api.get('/files', getAllFilesHandler);
-    router_api.post('/file/create', createFile);
+    router_api.get('/files', IPMiddleware, getAllFilesHandler);
+    router_api.post('/file/create', IPMiddleware, createFile);
     router_api.get('/file/:id', getFileById);
-    router_api.delete('/file/:id', deleteFileById);
+    router_api.get('/file/:id/meta', IPMiddleware, getFileDataById);
+    router_api.delete('/file/:id', IPMiddleware, deleteFileById);
 
-    router_api.get('/categories', getAllCategories);
-    router_api.get('/category/:category', getFilesByCategory);
+    router_api.get('/categories', IPMiddleware, getAllCategories);
+    router_api.get('/category/:category', IPMiddleware, getFilesByCategory);
+    router_api.post('/categories/create', IPMiddleware, createCategory)
 
 }
 

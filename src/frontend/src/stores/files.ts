@@ -1,23 +1,15 @@
-import axios from "axios";
 import { defineStore } from "pinia"
 import { ref } from "vue";
-import api, { APIProvider } from "../api/api";
+import api from "../api/api";
 import { useCategories } from "./categories";
+import { useToast } from "vue-toast-notification";
 // import type { TFile } from "/server/mysqlService";
-type TFile = { id: string, type: string, name: string, addedAt: number, lastUsed: number }
+type TFile = { id: string, type: string, addedAt: number, lastUsed: number }
 
 export const useFileStore = defineStore('FileStore', () => {
 
     const allFilesCount = ref(0);
-    const files = ref<TFile[]>([
-        {
-            addedAt: Date.now(),
-            id: 'copt',
-            lastUsed: Date.now(),
-            name: 'copy',
-            type: 'png',
-        }
-    ]);
+    const files = ref<TFile[]>([]);
 
     async function GetAllFilesData() {
         const data = await api.getAllFiles();
@@ -57,6 +49,14 @@ export const useFileStore = defineStore('FileStore', () => {
     function DeleteFile(id: string) {
         api.deleteFileById(id);
         files.value.splice(files.value.findIndex(v => v.id == id), 1);
+        useToast().success(`File ${id} deleted`, { position: 'top' })
+    }
+    
+    function DoesFileAlreadyExists(name: string) {
+        return api.getFileMetaById(name).then(({ data }) => {
+            console.log(data, typeof(data), data != null || data.length == 0)
+            return data != null && data.length != 0;
+        })
     }
 
     return {
@@ -67,5 +67,6 @@ export const useFileStore = defineStore('FileStore', () => {
         CreateFile,
         DeleteFile,
         GetFilesByCategory,
+        DoesFileAlreadyExists,
     }
 })

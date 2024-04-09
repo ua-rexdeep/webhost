@@ -5,39 +5,23 @@ import fs from 'fs';
 
 export function getAllFilesHandler(req: Request, res: Response) {
     
-    if(req.ip != '::1') {
-        res.statusCode = 403;
-        res.json({ error: 'help me' })
-    }
 
     MySQL.GetAllFiles().then((files) => res.json(files));
 }
 
 export function getAllCategories(req: Request, res: Response) {
-    if(req.ip != '::1') {
-        res.statusCode = 403;
-        res.json({ error: 'help me' })
-    }
 
     MySQL.GetAllCategories().then((response) => res.json(response));
 }
 
 export function getFilesByCategory(req: Request<{ category: string }>, res: Response) {
     
-    if(req.ip != '::1') {
-        res.statusCode = 403;
-        res.json({ error: 'help me' })
-    }
 
     MySQL.GetFilesByCategory(req.params.category).then((response) => res.json(response));
 }
 
 export async function createFile(req: Request, res: Response) {
     
-    if(req.ip != '::1') {
-        res.statusCode = 403;
-        res.json({ error: 'help me' })
-    }
 
     const id = req.body['file-id'];
     const category = req.body['file-category'];
@@ -51,13 +35,18 @@ export async function createFile(req: Request, res: Response) {
             return void res.json({ error: 'File with id already exists' });
         }
         
-        file.mv(`storage/${id}.${type}`, (err) => {
-            if(err) console.error(err);
-            else MySQL.CreateFile(id, category, type, file.size);
-        });
+        file.mv(`storage/${id}.${type}`, async (err) => {
+            if(err) {
+                console.error(err);
+                res.end();
+            }
+            else {
+                await MySQL.CreateFile(id, category, type, file.size);
 
-        const newFile = await MySQL.GetFileById(id);
-        res.json(newFile);
+                const newFile = await MySQL.GetFileById(id);
+                res.json(newFile);
+            }
+        });
     }
 }
 
@@ -82,10 +71,27 @@ export async function getFileById(req: Request<{ id: string }>, res: Response) {
     }
 }
 
-export function deleteFileById(req: Request<{ id: string }>, res: Response) {
-    if(req.ip != '::1') {
-        res.statusCode = 403;
-        res.json({ error: 'help me' })
-    }
-    MySQL.DeleteFileById(req.params.id);
+export async function getFileDataById(req: Request<{ id: string }>, res: Response) {
+    const id = req.params.id.split('.')[0];
+    const fileData = await MySQL.GetFileById(id);
+    console.log("GETFILE", id)
+    res.json(fileData);
+}
+
+export async function deleteFileById(req: Request<{ id: string }>, res: Response) {
+    const fileData = await MySQL.GetFileById(req.params.id);
+
+    if(fileData) MySQL.DeleteFileById(req.params.id);
+    else throw new Error("No file with id");
+
+    fs.rm(`storage/${req.params.id}.${fileData.type}`, () => {});
+    res.end();
+}
+
+export function createCategory(req: Request, res: Response) {
+    console.log('create', req.body)
+    const name = req.body.name;
+    MySQL.CreateCategory(name);
+
+    res.end();
 }

@@ -8,6 +8,10 @@ export function createFile(formData: FormData) {
     return APIProvider.post('/file/create', formData).then(({ data }) => data);
 }
 
+export function getFileMetaById(id: string) {
+    return APIProvider.get(`/file/${id}/meta`);
+}
+
 export function deleteFileById(id: string) {
     return APIProvider.delete(`/file/${id}`);
 }

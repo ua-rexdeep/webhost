@@ -5,7 +5,7 @@ import { useFileStore } from "./files";
 
 export const useCategories = defineStore('categoriesStore', () => {
 
-    const categories = ref([]);
+    const categories = ref<{ name: string, num_files: number }[]>([]);
     const currentCategory = ref<string | null>(null);
 
     async function getAllCategories() {
@@ -20,11 +20,17 @@ export const useCategories = defineStore('categoriesStore', () => {
         files.GetFilesByCategory(name);
     }
 
+    function createCategory(name: string) {
+        api.createCategory(name);
+        categories.value.push({ name, num_files: 0 });
+    }
+
     return {
         currentCategory,
         categories,
 
         selectCategory,
         getAllCategories,
+        createCategory,
     }
 });
