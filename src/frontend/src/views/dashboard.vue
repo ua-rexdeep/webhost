@@ -164,6 +164,7 @@ onMounted(() => {
                     uploadFileNameCheck.value.state = 1;
                     send();
                 } else {
+                    toast.error('File with name already exists', { position: 'top' })
                     uploadFileNameInput({ target: { value: match } })
                 }
             })
