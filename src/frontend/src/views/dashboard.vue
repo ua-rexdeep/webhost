@@ -113,9 +113,8 @@ async function send() {
 function onLoaded({ target }) {
     uploadFile.value = target.files[0]
     const [, match] = target.files[0].name.match(/^([\w\s\d_-]+)/);
-    uploadFileName.value = match;
 
-    uploadFileNameInput({ target: { value: match } })
+    uploadFileNameInput({ target: { value: match.replaceAll(' ', '-') } })
 }
 
 function onCreateCategory() {
@@ -124,7 +123,7 @@ function onCreateCategory() {
 }
 
 function uploadFileNameInput({ target }) {
-    const value = target.value;
+    const value = target.value.replaceAll(' ', '-');
     console.log('uploadFileNameInput', value)
     uploadFileName.value = value;
     clearTimeout(uploadFileNameCheck.value.timeout);
@@ -155,21 +154,21 @@ onMounted(() => {
         uploadFile.value = files[0]
         
         const [, match] = files[0].name.match(/^([\w\s\d_-]+)/);
-        uploadFileName.value = match;
+        uploadFileName.value = match.replaceAll(' ', '-');
 
         if(categoryStore.currentCategory != null) {
             uploadFileCategory.value = categoryStore.currentCategory;
-            fileStore.DoesFileAlreadyExists(match).then((exists) => {
+            fileStore.DoesFileAlreadyExists(uploadFileName.value).then((exists) => {
                 if(!exists) {
                     uploadFileNameCheck.value.state = 1;
                     send();
                 } else {
                     toast.error('File with name already exists', { position: 'top' })
-                    uploadFileNameInput({ target: { value: match } })
+                    uploadFileNameInput({ target: { value: uploadFileName.value } })
                 }
             })
         }
-        else uploadFileNameInput({ target: { value: match } })
+        else uploadFileNameInput({ target: { value: uploadFileName.value } })
     }, false);
 })
 </script>
