@@ -22,7 +22,7 @@
             <div class="media-type border rounded-md border-[#222326] bg-[#333539] uppercase absolute left-2 top-2">
                 {{ file.type }}
             </div>
-            <div class="mx-1 my-4 h-24" v-if="['png', 'jpg', 'jpeg'].includes(file.type)"
+            <div class="mx-1 my-4 h-24" v-if="['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(file.type)"
                 :style="{ background: `center / contain no-repeat url(http://localhost:3092/api/file/${file.id})` }">
             </div>
             <video class="mx-1 my-4 h-24" v-if="file.type == 'mp4'" loop autoplay muted
