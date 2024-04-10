@@ -157,7 +157,18 @@ onMounted(() => {
         const [, match] = files[0].name.match(/^([\w\s\d_-]+)/);
         uploadFileName.value = match;
 
-        uploadFileNameInput({ target: { value: match } })
+        if(categoryStore.currentCategory != null) {
+            uploadFileCategory.value = categoryStore.currentCategory;
+            fileStore.DoesFileAlreadyExists(match).then((exists) => {
+                if(!exists) {
+                    uploadFileNameCheck.value.state = 1;
+                    send();
+                } else {
+                    uploadFileNameInput({ target: { value: match } })
+                }
+            })
+        }
+        else uploadFileNameInput({ target: { value: match } })
     }, false);
 })
 </script>
