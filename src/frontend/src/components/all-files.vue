@@ -92,7 +92,7 @@ const computedFiles = computed(() => {
 })
 
 function CopyIDToClipboard(id, text) {
-    navigator.clipboard.writeText(`http://${env.VITE_IP}/api/file/${text}`);
+    navigator.clipboard.writeText(`http://${env.VITE_IP}:3092/api/file/${text}`);
     lastCopied.value = id;
     setTimeout(() => {
         if(lastCopied.value == id) lastCopied.value = null;
