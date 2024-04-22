@@ -49,3 +49,8 @@ MySQL.Connect().then(async () => {
     await SetupControllers(app);
     RunServer();
 })
+
+process.addListener('uncaughtException', async (err) => {
+    console.error(`unCaught exception: ${err.message}`);
+    console.trace(err);
+});
