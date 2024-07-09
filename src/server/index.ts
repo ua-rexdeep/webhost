@@ -7,6 +7,7 @@ import fileUpload from 'express-fileupload';
 import { MySQL } from './mysqlService';
 import { IPMiddleware } from './middleware/ipmiddleware';
 import axios from 'axios';
+import { SendError } from './errorHandler';
 
 const app = express();
 const port = process.env.PORT || 3092;
@@ -52,8 +53,5 @@ MySQL.Connect().then(async () => {
 })
 
 process.addListener('uncaughtException', async (err) => {
-    console.error(`unCaught exception: ${err.message}`);
-    console.trace(err);
-    if(process.env.WEBHOOK) axios.post(process.env.WEBHOOK, { content: `Error caughted: ${err.message} | ${new Date().toLocaleString()} | https://logs.betterstack.com/team/189697/tail?s=763480&rf=now-2d` });
-    if(process.env.BETTERSTUCK_TOKEN) axios.post('https://in.logs.betterstack.com/', { message: err.message, stack: err.stack }, { headers: { Authorization: `Bearer ${process.env.BETTERSTUCK_TOKEN}` } });
+    SendError(err);
 });

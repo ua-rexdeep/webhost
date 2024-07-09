@@ -1,4 +1,5 @@
 import mysql2 from 'mysql2/promise';
+import { SendError } from './errorHandler';
 
 export type TFile = { id: string, type: string, name: string, addedAt: number, lastUsed: number }
 class MySQLExecutor {
@@ -14,7 +15,7 @@ class MySQLExecutor {
         if((this.connection as any).connection._closing == true) {
             this.waitConnection = null;
             this.Connect();
-            throw new Error("No DB connection");
+            SendError(new Error("No DB connection"));
         } 
         return true;
     }
@@ -28,7 +29,7 @@ class MySQLExecutor {
                 user: process.env.DB_USER || 'root',
                 password: process.env.DB_PASS,
                 database: process.env.DB_DB || 'vrp',
-            });;
+            });
             this.connection = await this.waitConnection;
             this.waitConnection = null;
         } catch(err) {
