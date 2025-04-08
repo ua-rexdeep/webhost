@@ -68,6 +68,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useFileStore } from '../stores/files';
 import { useCategories } from '../stores/categories';
 import { useToast } from 'vue-toast-notification';
+import api from "../api/api";
 
 const $toast = useToast();
 const fileStore = useFileStore();
@@ -76,8 +77,11 @@ const sortBy = ref(0);
 const lastCopied = ref(null);
 const filterByID = ref('');
 const changeCategory = ref({ show: false, x: 0, y: 0, fileId: null });
+const webIP = ref(null);
 
-const env = import.meta.env;
+onMounted(() => {
+    api.getExternalAccessPoint().then(ip => webIP.value = ip);
+});
 
 const computedFiles = computed(() => {
     let sorted = [...fileStore.files];
@@ -92,7 +96,7 @@ const computedFiles = computed(() => {
 })
 
 function CopyIDToClipboard(id, text) {
-    navigator.clipboard.writeText(`http://${env.VITE_IP}:3092/api/file/${text}`);
+    navigator.clipboard.writeText(`http://${webIP.value}:3092/api/file/${text}`);
     lastCopied.value = id;
     setTimeout(() => {
         if(lastCopied.value == id) lastCopied.value = null;

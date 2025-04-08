@@ -1,13 +1,13 @@
-import express, { Application, Request, Response } from 'express';
-import { changeFileCategory, createCategory, createFile, deleteFileById, getAllCategories, getAllFilesHandler, getFileById, getFileDataById, getFilesByCategory } from './controllers/files';
-import { assets, dashboard, index } from './controllers/dashboard';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import 'dotenv/config';
+import express, { Application } from 'express';
 import fileUpload from 'express-fileupload';
-import { MySQL } from './mysqlService';
-import { IPMiddleware } from './middleware/ipmiddleware';
-import axios from 'axios';
+import { assets, dashboard, externalAccessPoint, index } from './controllers/dashboard';
+import { changeFileCategory, createCategory, createFile, deleteFileById, getAllCategories, getAllFilesHandler, getFileById, getFileDataById, getFilesByCategory } from './controllers/files';
 import { SendError } from './errorHandler';
+import { IPMiddleware } from './middleware/ipmiddleware';
+import { MySQL } from './mysqlService';
 
 const app = express();
 const port = process.env.PORT || 3092;
@@ -29,6 +29,8 @@ async function SetupControllers(app: Application) {
     router_front.get('/', IPMiddleware, index);
     router_front.get('/assets/:file', IPMiddleware, assets);
     router_front.get('/dashboard', IPMiddleware, dashboard);
+    
+    router_api.get('/externalAccessPoint', IPMiddleware, externalAccessPoint);
 
     router_api.get('/files', IPMiddleware, getAllFilesHandler);
     router_api.post('/file/create', IPMiddleware, createFile);
@@ -44,7 +46,11 @@ async function SetupControllers(app: Application) {
 }
 
 function RunServer() {
-    app.listen(port, () => console.log(`Run at ${new Date().toLocaleString()}`));
+    app.listen(port, () => {
+        console.log(`Run at ${new Date().toLocaleString()}`)
+        console.log(`Access: http://localhost:${port}/`);
+        console.log(`External access: http://${process.env.WEB_IP}:${port}/`);
+    });
 }
 
 MySQL.Connect().then(async () => {

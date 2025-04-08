@@ -1,7 +1,7 @@
-import { Application, Request, Response } from 'express';
-import { FileArray, UploadedFile } from 'express-fileupload';
-import { MySQL } from '../mysqlService';
+import { Request, Response } from 'express';
+import { UploadedFile } from 'express-fileupload';
 import fs from 'fs';
+import { MySQL } from '../mysqlService';
 
 export function getAllFilesHandler(req: Request, res: Response) {
     
@@ -27,7 +27,9 @@ export async function createFile(req: Request, res: Response) {
     const category = req.body['file-category'];
     if(req.files) {
         const file = req.files![0] as UploadedFile;
-        const type = file.mimetype.split('/')[1];
+        let type = file.mimetype.split('/')[1];
+        
+        if(type == 'mpeg') type = 'mp3';
 
         const fileData = await MySQL.GetFileById(id);
         if(fileData) {

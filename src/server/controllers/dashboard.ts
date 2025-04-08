@@ -12,3 +12,7 @@ export function dashboard(req: Request, res: Response) {
 export function assets(req: Request, res: Response) {
     res.sendFile(path.join(__dirname, req.url));
 }
+
+export function externalAccessPoint(req: Request, res: Response) {
+    res.send(process.env.WEB_IP);
+}
