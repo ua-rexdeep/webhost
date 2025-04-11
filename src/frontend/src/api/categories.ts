@@ -1,4 +1,3 @@
-import axios from "axios";
 import { APIProvider } from "./api";
 
 export function getAllCategories() {
@@ -11,4 +10,8 @@ export function createCategory(name: string) {
 
 export function changeFileCategory(id: string, name: string) {
     return APIProvider.patch(`/file/${id}/category`, { categoryName: name });
+}
+
+export function deleteCategory(name: string) {
+    return APIProvider.delete(`/category/${name}`);
 }

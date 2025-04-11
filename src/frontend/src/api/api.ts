@@ -1,5 +1,5 @@
 import axios from "axios";
-import { changeFileCategory, createCategory, getAllCategories } from "./categories";
+import { changeFileCategory, createCategory, deleteCategory, getAllCategories } from "./categories";
 import { createFile, deleteFileById, getAllFiles, getFileMetaById, getFilesByCategory } from "./files";
 import { getExternalAccessPoint } from "./options";
 
@@ -17,6 +17,7 @@ export default {
     getFilesByCategory,
     createCategory,
     changeFileCategory,
+    deleteCategory,
 
     getExternalAccessPoint,
 }

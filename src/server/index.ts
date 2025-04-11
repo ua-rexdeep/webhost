@@ -4,7 +4,7 @@ import 'dotenv/config';
 import express, { Application } from 'express';
 import fileUpload from 'express-fileupload';
 import { assets, dashboard, externalAccessPoint, index } from './controllers/dashboard';
-import { changeFileCategory, createCategory, createFile, deleteFileById, getAllCategories, getAllFilesHandler, getFileById, getFileDataById, getFilesByCategory } from './controllers/files';
+import { changeFileCategory, createCategory, createFile, deleteCategory, deleteFileById, getAllCategories, getAllFilesHandler, getFileById, getFileDataById, getFilesByCategory } from './controllers/files';
 import { SendError } from './errorHandler';
 import { IPMiddleware } from './middleware/ipmiddleware';
 import { MySQL } from './mysqlService';
@@ -42,6 +42,7 @@ async function SetupControllers(app: Application) {
     router_api.get('/categories', IPMiddleware, getAllCategories);
     router_api.get('/category/:category', IPMiddleware, getFilesByCategory);
     router_api.post('/categories/create', IPMiddleware, createCategory)
+    router_api.delete('/category/:category', IPMiddleware, deleteCategory)
 
 }
 

@@ -93,6 +93,11 @@ class MySQLExecutor {
         console.log('update web_files set category = ? where id = ?;', categoryName, fileID)
         this.connection!.query('update web_files set category = ? where id = ?;', [categoryName, fileID]);
     }
+
+    async DeleteCategory(categoryName: string) {
+        await this.CheckConnection();
+        this.connection!.execute("delete from web_categories where name = ?;", [categoryName])
+    }
 }
 
 export const MySQL = new MySQLExecutor();

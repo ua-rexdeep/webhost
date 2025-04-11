@@ -17,14 +17,19 @@
                         @click="fileStore.GetAllFilesData()"
                         :class="{ 'bg-[#333539]': categoryStore.currentCategory == null }">
                         <span>All</span>
-                        <span class="text-xs">{{ fileStore.allFilesCount }} files</span>
+                        <div class="text-xs w-10">{{ fileStore.allFilesCount }} files</div>
                     </div>
                     <div class="text-base py-1 px-3 rounded-md flex justify-between items-center cursor-pointer" 
-                        :class="{ 'bg-[#333539]': categoryStore.currentCategory == category.name }"
+                        :class="{ 'bg-[#333539] cursor-default': categoryStore.currentCategory == category.name }"
                         @click="categoryStore.selectCategory(category.name)"
                         v-for="category in categoryStore.categories" :key="category.name">
                         <span>{{ category.name }}</span>
-                        <span class="text-xs">{{ category.num_files }} files</span>
+                        <div class="flex items-center gap-2 h-full">
+                            <div v-if="category.num_files == 0" 
+                                @click.stop="() => deleteCategory(category.name)" 
+                                class="h-3/4 flex items-center aspect-square justify-center text-sm cursor-pointer text-red-500"><i class="fas fa-trash-alt" /></div>
+                            <div class="text-xs w-10">{{ category.num_files }} files</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,6 +142,10 @@ function uploadFileNameInput({ target }) {
 
         }, 700);
     }
+}
+
+function deleteCategory(name) {
+    categoryStore.deleteCategory(name);
 }
 
 onMounted(() => {

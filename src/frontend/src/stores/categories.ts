@@ -34,6 +34,16 @@ export const useCategories = defineStore('categoriesStore', () => {
         return api.changeFileCategory(id, category);
     }
 
+    function deleteCategory(category: string) {
+        const cat = categories.value.find(v => v.name == category);
+        if(!cat || cat.num_files > 0) {
+            return false;
+        } else {
+            categories.value = categories.value.filter(v => v.name != category);
+            api.deleteCategory(category);
+        }
+    }
+
     return {
         currentCategory,
         categories,
@@ -42,5 +52,6 @@ export const useCategories = defineStore('categoriesStore', () => {
         getAllCategories,
         createCategory,
         changeFileCategory,
+        deleteCategory,
     }
 });

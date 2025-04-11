@@ -104,3 +104,9 @@ export function changeFileCategory(req: Request<{ id: string }, null, { category
 
     res.end();
 }
+
+export function deleteCategory(req: Request<{ category: string }>, res: Response) {
+    MySQL.DeleteCategory(req.params.category);
+
+    res.sendStatus(200);
+}
