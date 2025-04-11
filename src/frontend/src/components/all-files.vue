@@ -16,38 +16,7 @@
     </div>
     <div class="grid grid-cols-7 gap-2 overflow-y-scroll overflow-x-hidden pr-1" id="all-files-list">
 
-        <div class="flex flex-col w-48 justify-between group bg-[#333539] px-2 rounded-md cursor-pointer py-2 relative"
-            v-for="file in computedFiles" @click="CopyIDToClipboard(file.id, file.id + '.' + file.type)" :key="file.id">
-
-            <div class="media-type border rounded-md border-[#222326] bg-[#333539] uppercase absolute left-2 top-2">
-                {{ file.type }}
-            </div>
-            <div class="mx-1 my-4 h-24" v-if="['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(file.type)"
-                :style="{ background: `center / contain no-repeat url(http://localhost:3092/api/file/${file.id})` }">
-            </div>
-            <video class="mx-1 my-4 h-24" v-if="file.type == 'mp4'" loop autoplay muted
-                :src="`http://localhost:3092/api/file/${file.id}`" />
-
-            <div class="flex items-center">
-                <i class="fa-solid fa-copy text-[#456CCF] text-lg mr-2 flex" v-show="lastCopied != file.id"></i>
-                <i class="fa-solid fa-check text-success text-lg mr-2 flex" v-show="lastCopied == file.id"></i>
-                <div class="text-sm whitespace-nowrap w-56 overflow-hidden text-ellipsis">{{ file.id }}</div>
-            </div>
-            <div class="flex items-center justify-between mt-1">
-                <div class="text-xs mr-1" v-show="sortBy == 0">Added: {{ new Date(file.addedAt).toLocaleDateString() }}
-                </div>
-                <div class="text-xs mr-1 text-[#F05D5D]" v-show="sortBy == 1 && file?.lastUsed == 0">Never used</div>
-                <div class="text-xs mr-1" v-show="sortBy == 1 && file?.lastUsed"
-                    :class="{ 'text-[#F05D5D]': Date.now() - file?.lastUsed > 2629800000 }">
-                    LastUsed: {{ new Date(file.lastUsed).toLocaleDateString() }}
-                </div>
-                <div class="flex pr-2 gap-2 items-center">
-                    <i class="fa-solid fa-layer-group cursor-pointer p-1 hover:bg-[#111] rounded" @click.stop="e => onChangeCategoryClick(e, file.id)"></i>
-                    <i class="fa-solid fa-trash text-[#F05D5D] cursor-pointer p-1 hover:bg-[#111] rounded"
-                        @click.stop="fileStore.DeleteFile(file.id)"></i>
-                </div>
-            </div>
-        </div>
+        <SignleFile v-for="file in computedFiles" :key="file.id" :file="file" :sortBy="sortBy" :lastCopied="lastCopied" @copy="CopyIDToClipboard(file.id, file.id + '.' + file.type)" @changeClick="onChangeCategoryClick" />
 
         <Teleport to="body">
             <div class="w-full h-full bg-[#141414c9] absolute top-0 left-0 cursor-zoom-out" @click="changeCategory.show = false"
@@ -64,11 +33,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useFileStore } from '../stores/files';
-import { useCategories } from '../stores/categories';
+import { computed, onMounted, ref } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import api from "../api/api";
+import { useCategories } from '../stores/categories';
+import { useFileStore } from '../stores/files';
+import SignleFile from './single-file.vue';
 
 const $toast = useToast();
 const fileStore = useFileStore();
@@ -82,6 +52,14 @@ const webIP = ref(null);
 onMounted(() => {
     api.getExternalAccessPoint().then(ip => webIP.value = ip);
 });
+
+function onChangeCategoryClick({ target }, fileID) {
+    const rect = target.getBoundingClientRect();
+    changeCategory.value.show = true;
+    changeCategory.value.x = rect.x + rect.width;
+    changeCategory.value.y = rect.y + rect.height;
+    changeCategory.value.fileId = fileID;
+}
 
 const computedFiles = computed(() => {
     let sorted = [...fileStore.files];
@@ -101,14 +79,6 @@ function CopyIDToClipboard(id, text) {
     setTimeout(() => {
         if(lastCopied.value == id) lastCopied.value = null;
     }, 1500);
-}
-
-function onChangeCategoryClick({ target }, fileID) {
-    const rect = target.getBoundingClientRect();
-    changeCategory.value.show = true;
-    changeCategory.value.x = rect.x + rect.width;
-    changeCategory.value.y = rect.y + rect.height;
-    changeCategory.value.fileId = fileID;
 }
 
 async function onChangeCategoryOption(categoryName) {

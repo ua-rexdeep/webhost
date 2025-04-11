@@ -75,11 +75,11 @@
 </template>
 
 <script setup>
-import {ref, computed, onMounted} from 'vue';
-import AllFiles from '../components/all-files.vue';
-import { useFileStore } from '../stores/files';
-import { useCategories } from '../stores/categories';
+import { computed, onMounted, ref } from 'vue';
 import { useToast } from 'vue-toast-notification';
+import AllFiles from '../components/all-files.vue';
+import { useCategories } from '../stores/categories';
+import { useFileStore } from '../stores/files';
 const uploadFile = ref();
 const uploadFileRef = ref();
 const uploadFileFormRem = ref();
@@ -153,8 +153,55 @@ onMounted(() => {
         
         uploadFile.value = files[0]
         
-        const [, match] = files[0].name.match(/^([\w\s\d_-]+)/);
-        uploadFileName.value = match.replaceAll(' ', '-');
+        const chars = {
+            ['й']: 'y',
+            ['ц']: 'c',
+            ['у']: 'u',
+            ['к']: 'k',
+            ['е']: 'e',
+            ['н']: 'n',
+            ['г']: 'g',
+            ['ш']: 'sh',
+            ['щ']: 'sch',
+            ['з']: 'z',
+            ['х']: 'x',
+            ['ї']: 'ii',
+            ['ф']: 'f',
+            ['і']: 'i',
+            ['в']: 'v',
+            ['а']: 'a',
+            ['п']: 'p',
+            ['р']: 'r',
+            ['о']: 'o',
+            ['л']: 'l',
+            ['д']: 'd',
+            ['ж']: 'j',
+            ['є']: 'e',
+            ['я']: 'ya',
+            ['ч']: 'ch',
+            ['с']: 's',
+            ['м']: 'm',
+            ['и']: 'y',
+            ['т']: 't',
+            ['б']: 'b',
+            ['ю']: 'u',
+            ['ы']: 'y',
+            ['ь']: '',
+            ['ъ']: '',
+            ['э']: 'e',
+        }
+        let name = files[0].name.toLocaleLowerCase();
+        for(const c of Object.keys(chars)) {
+            if(name.includes(c)) console.log(c,chars[c]);
+            name = name.replaceAll(c, chars[c]);
+        }
+        console.log('name', name)
+        let [match] = name.match(/[\w\s\d_-]+/);
+        match = match.replaceAll(' ', '-')
+        while(match.includes('--')) {
+            match = match.replaceAll('--', '-')
+        }
+        uploadFileName.value = match;
 
         if(categoryStore.currentCategory != null) {
             uploadFileCategory.value = categoryStore.currentCategory;

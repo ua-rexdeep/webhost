@@ -1,8 +1,8 @@
-import { defineStore } from "pinia"
+import { defineStore } from "pinia";
 import { ref } from "vue";
+import { useToast } from "vue-toast-notification";
 import api from "../api/api";
 import { useCategories } from "./categories";
-import { useToast } from "vue-toast-notification";
 // import type { TFile } from "/server/mysqlService";
 type TFile = { id: string, type: string, addedAt: number, lastUsed: number }
 
@@ -15,6 +15,11 @@ export const useFileStore = defineStore('FileStore', () => {
             id: '123',
             lastUsed: Date.now(),
             type: 'jpg',
+        },{
+            addedAt: Date.now(),
+            id: '124',
+            lastUsed: Date.now(),
+            type: 'mp3',
         }
     ]);
 
